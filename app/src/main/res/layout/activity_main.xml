@@ -2,19 +2,24 @@
 <ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:fillViewport="true"
+    android:focusable="true"
+    android:focusableInTouchMode="true"
     android:background="#F5F5F5">
 
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="vertical"
-        android:padding="16dp">
+        android:padding="16dp"
+        android:focusable="true"
+        android:focusableInTouchMode="true">
 
         <!-- Título -->
         <TextView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="📝 Formulario de Registro"
+            android:text="Formulario de Registro"
             android:textSize="28sp"
             android:textStyle="bold"
             android:gravity="center"
@@ -28,6 +33,9 @@
             android:layout_height="wrap_content"
             android:hint="Nombre"
             android:inputType="textPersonName"
+            android:focusable="true"
+            android:focusableInTouchMode="true"
+            android:clickable="true"
             android:layout_marginBottom="12dp"
             android:padding="12dp"
             android:background="@android:drawable/editbox_background"/>
@@ -39,6 +47,9 @@
             android:layout_height="wrap_content"
             android:hint="Apellido"
             android:inputType="textPersonName"
+            android:focusable="true"
+            android:focusableInTouchMode="true"
+            android:clickable="true"
             android:layout_marginBottom="12dp"
             android:padding="12dp"
             android:background="@android:drawable/editbox_background"/>
@@ -50,6 +61,9 @@
             android:layout_height="wrap_content"
             android:hint="Edad"
             android:inputType="number"
+            android:focusable="true"
+            android:focusableInTouchMode="true"
+            android:clickable="true"
             android:layout_marginBottom="12dp"
             android:padding="12dp"
             android:background="@android:drawable/editbox_background"/>
@@ -61,6 +75,9 @@
             android:layout_height="wrap_content"
             android:hint="Correo electrónico"
             android:inputType="textEmailAddress"
+            android:focusable="true"
+            android:focusableInTouchMode="true"
+            android:clickable="true"
             android:layout_marginBottom="12dp"
             android:padding="12dp"
             android:background="@android:drawable/editbox_background"/>
@@ -72,6 +89,9 @@
             android:layout_height="wrap_content"
             android:hint="Teléfono"
             android:inputType="phone"
+            android:focusable="true"
+            android:focusableInTouchMode="true"
+            android:clickable="true"
             android:layout_marginBottom="24dp"
             android:padding="12dp"
             android:background="@android:drawable/editbox_background"/>
