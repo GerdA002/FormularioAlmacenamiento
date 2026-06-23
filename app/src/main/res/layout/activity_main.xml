@@ -1,132 +1,152 @@
 <?xml version="1.0" encoding="utf-8"?>
 <ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:fillViewport="true"
-    android:focusable="true"
-    android:focusableInTouchMode="true"
     android:background="#F5F5F5">
 
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:orientation="vertical"
-        android:padding="16dp"
-        android:focusable="true"
-        android:focusableInTouchMode="true">
+        android:orientation="vertical">
 
-        <!-- Título -->
-        <TextView
+        <!-- Header Azul -->
+        <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="Formulario de Registro"
-            android:textSize="28sp"
-            android:textStyle="bold"
+            android:background="#1976D2"
+            android:orientation="vertical"
+            android:padding="32dp"
             android:gravity="center"
-            android:layout_marginBottom="24dp"
-            android:textColor="#2196F3"/>
+            android:elevation="8dp">
 
-        <!-- Campo: Nombre -->
-        <EditText
-            android:id="@+id/etNombre"
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Registro de Usuario"
+                android:textSize="22sp"
+                android:textStyle="bold"
+                android:textColor="#FFFFFF"
+                android:textAllCaps="true"
+                android:letterSpacing="0.05"/>
+        </LinearLayout>
+
+        <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:hint="Nombre"
-            android:inputType="textPersonName"
-            android:focusable="true"
-            android:focusableInTouchMode="true"
-            android:clickable="true"
-            android:layout_marginBottom="12dp"
-            android:padding="12dp"
-            android:background="@android:drawable/editbox_background"/>
+            android:orientation="vertical"
+            android:padding="24dp">
 
-        <!-- Campo: Apellido -->
-        <EditText
-            android:id="@+id/etApellido"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:hint="Apellido"
-            android:inputType="textPersonName"
-            android:focusable="true"
-            android:focusableInTouchMode="true"
-            android:clickable="true"
-            android:layout_marginBottom="12dp"
-            android:padding="12dp"
-            android:background="@android:drawable/editbox_background"/>
+            <!-- Campo: Nombre -->
+            <com.google.android.material.textfield.TextInputLayout
+                android:id="@+id/tilNombre"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="12dp"
+                android:hint="Nombre completo"
+                style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox">
 
-        <!-- Campo: Edad -->
-        <EditText
-            android:id="@+id/etEdad"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:hint="Edad"
-            android:inputType="number"
-            android:focusable="true"
-            android:focusableInTouchMode="true"
-            android:clickable="true"
-            android:layout_marginBottom="12dp"
-            android:padding="12dp"
-            android:background="@android:drawable/editbox_background"/>
+                <com.google.android.material.textfield.TextInputEditText
+                    android:id="@+id/etNombre"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:inputType="textPersonName" />
+            </com.google.android.material.textfield.TextInputLayout>
 
-        <!-- Campo: Correo -->
-        <EditText
-            android:id="@+id/etCorreo"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:hint="Correo electrónico"
-            android:inputType="textEmailAddress"
-            android:focusable="true"
-            android:focusableInTouchMode="true"
-            android:clickable="true"
-            android:layout_marginBottom="12dp"
-            android:padding="12dp"
-            android:background="@android:drawable/editbox_background"/>
+            <!-- Campo: Apellido -->
+            <com.google.android.material.textfield.TextInputLayout
+                android:id="@+id/tilApellido"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="12dp"
+                android:hint="Apellidos"
+                style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox">
 
-        <!-- Campo: Teléfono -->
-        <EditText
-            android:id="@+id/etTelefono"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:hint="Teléfono"
-            android:inputType="phone"
-            android:focusable="true"
-            android:focusableInTouchMode="true"
-            android:clickable="true"
-            android:layout_marginBottom="24dp"
-            android:padding="12dp"
-            android:background="@android:drawable/editbox_background"/>
+                <com.google.android.material.textfield.TextInputEditText
+                    android:id="@+id/etApellido"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:inputType="textPersonName" />
+            </com.google.android.material.textfield.TextInputLayout>
 
-        <!-- Botón Guardar en Archivo -->
-        <Button
-            android:id="@+id/btnGuardarArchivo"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:text="Guardar en Archivo"
-            android:layout_marginBottom="12dp"
-            android:backgroundTint="#4CAF50"
-            android:textColor="#FFFFFF"
-            android:textSize="16sp"/>
+            <!-- Campo: Edad -->
+            <com.google.android.material.textfield.TextInputLayout
+                android:id="@+id/tilEdad"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="12dp"
+                android:hint="Edad"
+                style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox">
 
-        <!-- Botón Guardar en SQLite -->
-        <Button
-            android:id="@+id/btnGuardarSQLite"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:text="Guardar en SQLite"
-            android:layout_marginBottom="12dp"
-            android:backgroundTint="#2196F3"
-            android:textColor="#FFFFFF"
-            android:textSize="16sp"/>
+                <com.google.android.material.textfield.TextInputEditText
+                    android:id="@+id/etEdad"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:inputType="number" />
+            </com.google.android.material.textfield.TextInputLayout>
 
-        <!-- Botón Ver Datos -->
-        <Button
-            android:id="@+id/btnVerDatos"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:text="Ver Datos Guardados"
-            android:backgroundTint="#FF9800"
-            android:textColor="#FFFFFF"
-            android:textSize="16sp"/>
+            <!-- Campo: Correo -->
+            <com.google.android.material.textfield.TextInputLayout
+                android:id="@+id/tilCorreo"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="12dp"
+                android:hint="Correo electrónico"
+                style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox">
 
+                <com.google.android.material.textfield.TextInputEditText
+                    android:id="@+id/etCorreo"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:inputType="textEmailAddress" />
+            </com.google.android.material.textfield.TextInputLayout>
+
+            <!-- Campo: Teléfono -->
+            <com.google.android.material.textfield.TextInputLayout
+                android:id="@+id/tilTelefono"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="24dp"
+                android:hint="Número de teléfono"
+                style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox">
+
+                <com.google.android.material.textfield.TextInputEditText
+                    android:id="@+id/etTelefono"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:inputType="phone" />
+            </com.google.android.material.textfield.TextInputLayout>
+
+            <!-- Botón Guardar -->
+            <androidx.appcompat.widget.AppCompatButton
+                android:id="@+id/btnGuardar"
+                android:layout_width="match_parent"
+                android:layout_height="64dp"
+                android:text="Guardar datos"
+                android:layout_marginBottom="16dp"
+                android:background="#1976D2"
+                android:textColor="#FFFFFF"
+                android:textSize="18sp"
+                android:textStyle="bold"
+                android:textAllCaps="false"
+                android:gravity="center"
+                android:elevation="4dp"/>
+
+            <!-- Botón Ver Datos -->
+            <androidx.appcompat.widget.AppCompatButton
+                android:id="@+id/btnVerDatos"
+                android:layout_width="match_parent"
+                android:layout_height="64dp"
+                android:text="Ver datos guardados"
+                android:background="#455A64"
+                android:textColor="#FFFFFF"
+                android:textSize="18sp"
+                android:textStyle="bold"
+                android:textAllCaps="false"
+                android:gravity="center"
+                android:elevation="4dp"/>
+
+        </LinearLayout>
     </LinearLayout>
 </ScrollView>

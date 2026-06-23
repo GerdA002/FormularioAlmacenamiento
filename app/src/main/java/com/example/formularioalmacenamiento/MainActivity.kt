@@ -3,11 +3,12 @@ package com.example.formularioalmacenamiento
 import android.content.Context
 import android.os.Bundle
 import android.view.inputmethod.InputMethodManager
-import android.widget.Button
 import android.widget.EditText
 import android.widget.Toast
-import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
+import androidx.appcompat.widget.AppCompatButton
+import androidx.core.widget.doAfterTextChanged
+import com.google.android.material.dialog.MaterialAlertDialogBuilder
 
 class MainActivity : AppCompatActivity() {
 
@@ -16,11 +17,9 @@ class MainActivity : AppCompatActivity() {
     private lateinit var etEdad: EditText
     private lateinit var etCorreo: EditText
     private lateinit var etTelefono: EditText
-    private lateinit var btnGuardarArchivo: Button
-    private lateinit var btnGuardarSQLite: Button
-    private lateinit var btnVerDatos: Button
+    private lateinit var btnGuardar: AppCompatButton
+    private lateinit var btnVerDatos: AppCompatButton
 
-    private lateinit var archivoStorage: ArchivoStorage
     private lateinit var sqliteStorage: SQLiteStorage
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -34,20 +33,14 @@ class MainActivity : AppCompatActivity() {
         etCorreo = findViewById(R.id.etCorreo)
         etTelefono = findViewById(R.id.etTelefono)
 
-        btnGuardarArchivo = findViewById(R.id.btnGuardarArchivo)
-        btnGuardarSQLite = findViewById(R.id.btnGuardarSQLite)
+        btnGuardar = findViewById(R.id.btnGuardar)
         btnVerDatos = findViewById(R.id.btnVerDatos)
 
-        // Inicializar almacenamientos
-        archivoStorage = ArchivoStorage(this)
+        // Inicializar almacenamiento SQLite
         sqliteStorage = SQLiteStorage(this)
 
         // Configurar listeners
-        btnGuardarArchivo.setOnClickListener {
-            guardarEnArchivo()
-        }
-
-        btnGuardarSQLite.setOnClickListener {
+        btnGuardar.setOnClickListener {
             guardarEnSQLite()
         }
 
@@ -55,40 +48,92 @@ class MainActivity : AppCompatActivity() {
             verDatosGuardados()
         }
 
+        // Foco inicial y teclado
         etNombre.postDelayed({
             etNombre.requestFocus()
             mostrarTeclado(etNombre)
         }, 300)
 
-        etNombre.setOnClickListener {
-            etNombre.requestFocus()
-            mostrarTeclado(it as EditText)
+        // Listeners para asegurar que el teclado se muestre al tocar los campos
+        val campos = listOf(etNombre, etApellido, etEdad, etCorreo, etTelefono)
+        campos.forEach { field ->
+            field.setOnClickListener {
+                field.requestFocus()
+                mostrarTeclado(field)
+            }
         }
-        etApellido.setOnClickListener {
-            etApellido.requestFocus()
-            mostrarTeclado(it as EditText)
-        }
-        etEdad.setOnClickListener {
-            etEdad.requestFocus()
-            mostrarTeclado(it as EditText)
-        }
-        etCorreo.setOnClickListener {
-            etCorreo.requestFocus()
-            mostrarTeclado(it as EditText)
-        }
-        etTelefono.setOnClickListener {
-            etTelefono.requestFocus()
-            mostrarTeclado(it as EditText)
-        }
+
+        // Configurar validación en tiempo real
+        configurarValidacionEnTiempoReal()
     }
 
+    private fun configurarValidacionEnTiempoReal() {
+        etNombre.doAfterTextChanged { s ->
+            val texto = s.toString().trim()
+            if (texto.isEmpty()) {
+                etNombre.error = "El nombre es obligatorio"
+            } else if (!texto.all { it.isLetter() || it.isWhitespace() }) {
+                etNombre.error = "El nombre solo debe contener letras"
+            } else {
+                etNombre.error = null
+            }
+        }
+
+        etApellido.doAfterTextChanged { s ->
+            val texto = s.toString().trim()
+            if (texto.isEmpty()) {
+                etApellido.error = "El apellido es obligatorio"
+            } else if (!texto.all { it.isLetter() || it.isWhitespace() }) {
+                etApellido.error = "El apellido solo debe contener letras"
+            } else {
+                etApellido.error = null
+            }
+        }
+
+        etEdad.doAfterTextChanged { s ->
+            val texto = s.toString().trim()
+            val edad = texto.toIntOrNull()
+            if (texto.isEmpty()) {
+                etEdad.error = "La edad es obligatoria"
+            } else if (edad == null) {
+                etEdad.error = "La edad debe ser un número válido"
+            } else if (edad !in 1..120) {
+                etEdad.error = "Ingresa una edad válida (1 a 120)"
+            } else {
+                etEdad.error = null
+            }
+        }
+
+        etCorreo.doAfterTextChanged { s ->
+            val texto = s.toString().trim()
+            if (texto.isEmpty()) {
+                etCorreo.error = "El correo es obligatorio"
+            } else if (!android.util.Patterns.EMAIL_ADDRESS.matcher(texto).matches()) {
+                etCorreo.error = "El formato del correo es inválido"
+            } else {
+                etCorreo.error = null
+            }
+        }
+
+        etTelefono.doAfterTextChanged { s ->
+            val texto = s.toString().trim()
+            if (texto.isEmpty()) {
+                etTelefono.error = "El teléfono es obligatorio"
+            } else if (!texto.all { it.isDigit() }) {
+                etTelefono.error = "El teléfono solo debe contener números"
+            } else if (texto.length < 8) {
+                etTelefono.error = "El teléfono debe tener al menos 8 dígitos"
+            } else {
+                etTelefono.error = null
+            }
+        }
+    }
 
     private fun mostrarTeclado(view: EditText) {
         try {
             val imm = getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
             imm.showSoftInput(view, InputMethodManager.SHOW_IMPLICIT)
         } catch (e: Exception) {
-            // Si falla, intentar con otro método
             val imm = getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
             imm.toggleSoftInput(InputMethodManager.SHOW_FORCED, 0)
         }
@@ -107,45 +152,70 @@ class MainActivity : AppCompatActivity() {
     }
 
     private fun validarCampos(): Boolean {
+        val nombre = etNombre.text.toString().trim()
+        val apellido = etApellido.text.toString().trim()
+        val edadStr = etEdad.text.toString().trim()
+        val correo = etCorreo.text.toString().trim()
+        val telefono = etTelefono.text.toString().trim()
+
         return when {
-            etNombre.text.toString().trim().isEmpty() -> {
-                Toast.makeText(this, "El campo Nombre es obligatorio", Toast.LENGTH_SHORT).show()
-                etNombre.requestFocus()
-                mostrarTeclado(etNombre)
+            nombre.isEmpty() -> {
+                mostrarError(etNombre, "El nombre es obligatorio")
                 false
             }
-            etApellido.text.toString().trim().isEmpty() -> {
-                Toast.makeText(this, "El campo Apellido es obligatorio", Toast.LENGTH_SHORT).show()
-                etApellido.requestFocus()
-                mostrarTeclado(etApellido)
+            !nombre.all { it.isLetter() || it.isWhitespace() } -> {
+                mostrarError(etNombre, "El nombre solo debe contener letras")
                 false
             }
-            etEdad.text.toString().trim().isEmpty() -> {
-                Toast.makeText(this, "El campo Edad es obligatorio", Toast.LENGTH_SHORT).show()
-                etEdad.requestFocus()
-                mostrarTeclado(etEdad)
+            apellido.isEmpty() -> {
+                mostrarError(etApellido, "El apellido es obligatorio")
                 false
             }
-            etEdad.text.toString().trim().toIntOrNull() == null -> {
-                Toast.makeText(this, "El campo Edad debe ser un número válido", Toast.LENGTH_SHORT).show()
-                etEdad.requestFocus()
-                mostrarTeclado(etEdad)
+            !apellido.all { it.isLetter() || it.isWhitespace() } -> {
+                mostrarError(etApellido, "El apellido solo debe contener letras")
                 false
             }
-            etCorreo.text.toString().trim().isEmpty() -> {
-                Toast.makeText(this, "El campo Correo es obligatorio", Toast.LENGTH_SHORT).show()
-                etCorreo.requestFocus()
-                mostrarTeclado(etCorreo)
+            edadStr.isEmpty() -> {
+                mostrarError(etEdad, "La edad es obligatoria")
                 false
             }
-            etTelefono.text.toString().trim().isEmpty() -> {
-                Toast.makeText(this, "El campo Teléfono es obligatorio", Toast.LENGTH_SHORT).show()
-                etTelefono.requestFocus()
-                mostrarTeclado(etTelefono)
+            edadStr.toIntOrNull() == null -> {
+                mostrarError(etEdad, "La edad debe ser un número válido")
+                false
+            }
+            edadStr.toInt() !in 1..120 -> {
+                mostrarError(etEdad, "Ingresa una edad válida (1 a 120)")
+                false
+            }
+            correo.isEmpty() -> {
+                mostrarError(etCorreo, "El correo es obligatorio")
+                false
+            }
+            !android.util.Patterns.EMAIL_ADDRESS.matcher(correo).matches() -> {
+                mostrarError(etCorreo, "El formato del correo es inválido")
+                false
+            }
+            telefono.isEmpty() -> {
+                mostrarError(etTelefono, "El teléfono es obligatorio")
+                false
+            }
+            !telefono.all { it.isDigit() } -> {
+                mostrarError(etTelefono, "El teléfono solo debe contener números")
+                false
+            }
+            telefono.length < 8 -> {
+                mostrarError(etTelefono, "El teléfono debe tener al menos 8 dígitos")
                 false
             }
             else -> true
         }
+    }
+
+    private fun mostrarError(editText: EditText, mensaje: String) {
+        Toast.makeText(this, mensaje, Toast.LENGTH_SHORT).show()
+        editText.error = mensaje
+        editText.requestFocus()
+        mostrarTeclado(editText)
     }
 
     private fun obtenerDatosFormulario(): Persona {
@@ -158,58 +228,33 @@ class MainActivity : AppCompatActivity() {
         return Persona(nombre, apellido, edad, correo, telefono)
     }
 
-    private fun guardarEnArchivo() {
-        if (validarCampos()) {
-            val persona = obtenerDatosFormulario()
-            val guardado = archivoStorage.guardarPersona(persona)
-
-            if (guardado) {
-                Toast.makeText(this, "Datos guardados en archivo", Toast.LENGTH_SHORT).show()
-                limpiarCampos()
-            } else {
-                Toast.makeText(this, "Error al guardar en archivo", Toast.LENGTH_SHORT).show()
-            }
-        }
-    }
-
     private fun guardarEnSQLite() {
         if (validarCampos()) {
             val persona = obtenerDatosFormulario()
             val id = sqliteStorage.guardarPersona(persona)
 
             if (id != -1L) {
-                Toast.makeText(this, "Datos guardados en SQLite (ID: $id)", Toast.LENGTH_SHORT).show()
+                Toast.makeText(this, "Datos guardados correctamente", Toast.LENGTH_SHORT).show()
                 limpiarCampos()
+                ocultarTeclado()
             } else {
-                Toast.makeText(this, "Error al guardar en SQLite", Toast.LENGTH_SHORT).show()
+                Toast.makeText(this, "Error al guardar en la base de datos", Toast.LENGTH_SHORT).show()
             }
         }
     }
 
     private fun verDatosGuardados() {
         ocultarTeclado()
-        AlertDialog.Builder(this)
-            .setTitle("Ver Datos Guardados")
-            .setMessage("¿Qué datos deseas visualizar?")
-            .setPositiveButton("Archivo") { _, _ ->
-                val datos = archivoStorage.leerTodosLosDatos()
-                mostrarDatosEnDialogo("Datos del Archivo", datos)
-            }
-            .setNegativeButton("SQLite") { _, _ ->
-                val datos = sqliteStorage.leerTodosLosDatos()
-                mostrarDatosEnDialogo("Datos de SQLite", datos)
-            }
-            .setNeutralButton("Cancelar", null)
-            .show()
-    }
-
-    private fun mostrarDatosEnDialogo(titulo: String, datos: String) {
-        val mensaje = if (datos.isEmpty()) "No hay datos guardados" else datos
-
-        AlertDialog.Builder(this)
-            .setTitle(titulo)
-            .setMessage(mensaje)
-            .setPositiveButton("OK", null)
+        val datos = try {
+            sqliteStorage.leerTodosLosDatos()
+        } catch (e: Exception) {
+            "Error al leer la base de datos"
+        }
+        
+        MaterialAlertDialogBuilder(this)
+            .setTitle("Registros en el sistema")
+            .setMessage(datos)
+            .setPositiveButton("Cerrar", null)
             .show()
     }
 
@@ -219,7 +264,13 @@ class MainActivity : AppCompatActivity() {
         etEdad.text?.clear()
         etCorreo.text?.clear()
         etTelefono.text?.clear()
+        
+        etNombre.error = null
+        etApellido.error = null
+        etEdad.error = null
+        etCorreo.error = null
+        etTelefono.error = null
+
         etNombre.requestFocus()
-        mostrarTeclado(etNombre)
     }
 }
